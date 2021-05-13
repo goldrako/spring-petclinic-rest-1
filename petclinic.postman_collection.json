@@ -1,6 +1,3 @@
-// 20210513154232
-// https://www.postman.com/collections/5d2ecaa3d3ee52187de8
-
 {
   "info": {
     "_postman_id": "4f13effe-612a-424c-a988-b63ded3d0cda",
@@ -870,7 +867,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Body¿¡ catÀÌ Æ÷ÇÔµÇ¾î ÀÖ´ÂÁö Å×½ºÆ®', function () {",
+                  "pm.test('Bodyì— catì´ í¬í•¨ë˜ì–´ ìˆëŠ”ì§€ í…ŒìŠ¤íŠ¸', function () {",
                   "    pm.response.to.have.status(200);",
                   "    pm.response.to.be.ok;",
                   "    pm.expect(pm.response.text()).to.include('cat');",
@@ -1007,12 +1004,12 @@
                 "exec": [
                   "const res = pm.response.json();",
                   "",
-                  "console.log('addPetType °á°ú id : ' + res.id);",
-                  "console.log('addPetType °á°ú name : ' + res.name);",
+                  "console.log('addPetType ê²°ê³¼ id : ' + res.id);",
+                  "console.log('addPetType ê²°ê³¼ name : ' + res.name);",
                   "",
                   "pm.globals.set('petTypeId', parseInt(res.id));",
                   "",
-                  "console.log('È¯°æº¯¼ö ¼³Á¤µÈ petTypeId : ' + pm.globals.get('petTypeId'));",
+                  "console.log('í™˜ê²½ë³€ìˆ˜ ì„¤ì •ëœ petTypeId : ' + pm.globals.get('petTypeId'));",
                   "",
                   "",
                   "",
