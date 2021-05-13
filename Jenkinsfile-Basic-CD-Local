@@ -50,7 +50,7 @@ pipeline {
     stage( 'Deploy to Cluster' ) {
       steps {
         script {
-          kubernetesDeploy(kubeconfigId: 'kubeconfig-sa-token', configs: 'hello-world-app-local.yaml')
+          kubernetesDeploy(kubeconfigId: 'kubeconfig-psa-token', configs: 'spring-petclinic-app-local.yaml')
         }
         sh 'sleep 10'
         /*container('kubectl') {

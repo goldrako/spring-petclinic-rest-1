@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic-deployment
+  namespace: petclinic-dev
+  labels:
+    app: petclininc-rest
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: petclinic-rest
+  template:
+    metadata:
+      labels:
+        app: petclinict-rest
+    spec:
+      containers:
+        - name: petclinic-rest
+          image: ${REGISTRY_URL}/${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: harbor-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: petclinic-service
+  namespace: petclinic-dev
+  labels:
+    app: petclinic-rest
+spec:
+  type: LoadBalancer
+  selector:
+    app: petclinic-rest
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+#---
+#apiVersion: networking.k8s.io/v1beta1
+#kind: Ingress
+#metadata:
+#  name: petclinic-ingress
+# namespace: petclinic-dev
+#  annotations:
+#    kubernetes.io/ingress.class: ???nginx
+#spec:
+#  rules:
+#    - host: ???hello.example.com
+#      http:
+#        paths:
+#          - path: /
+#            backend:
+#              serviceName: petclinic-service
+#              servicePort: 8080
+# ingress 대신 LoadBalancer로 대체
+
