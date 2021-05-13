@@ -1,0 +1,98 @@
+pipeline {
+  agent {
+    kubernetes {
+      label 'hello-cd'
+      yamlFile 'jenkins-agent-pod-local.yaml'
+    }
+  }
+
+  environment {
+    REGISTRY_URL = '10.100.0.105:8000'
+    REGISTRY_CREDENTIALS = 'harbor-credentials-admin'
+    APP_IMAGE = null
+    IMAGE_REPO = 'hello-world'
+    IMAGE_NAME = 'spring-boot-hello-world'
+    IMAGE_TAG = sh(returnStdout: true, script: '(git rev-parse --short HEAD && echo "_$BUILD_NUMBER") | tr -d "\n"').trim()
+    APP_URL = '192.168.56.200'
+    APP_PORT = 8080
+  }
+
+  stages {
+    stage('Package') {
+      steps {
+        container('maven') {
+          sh 'mvn clean package -DskipTests'
+          archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+        }
+      }
+    }
+    stage('Build Docker image') {
+      steps {
+        container('docker') {
+          script {
+            APP_IMAGE = docker.build("${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
+          }
+        }
+      }
+    }
+    stage('Push Docker image') {
+      steps {
+        container('docker') {
+          script {
+            docker.withRegistry('http://' + REGISTRY_URL, REGISTRY_CREDENTIALS) {
+              APP_IMAGE.push()
+              APP_IMAGE.push('latest')
+            }
+          }
+        }
+      }
+    }
+    stage( 'Deploy to Cluster' ) {
+      steps {
+        script {
+          kubernetesDeploy(kubeconfigId: 'kubeconfig-sa-token', configs: 'hello-world-app-local.yaml')
+        }
+        sh 'sleep 10'
+        /*container('kubectl') {
+          sh 'sleep 10'
+          sh 'kubectl wait --for=condition=available --timeout=60s deployments -l app=hello-world'
+          sh 'kubectl wait --for=condition=ready --timeout=60s pods -l app=hello-world'
+        }*/
+      }
+    }
+    stage('API Test') {
+      steps {
+        container('newman') {
+          sh """
+            newman run hello-world.postman_collection.json \
+                  --env-var 'host_url=${APP_URL}' --env-var 'port=${APP_PORT}' \
+                  --reporters cli,junit \
+                  --reporter-junit-export 'target/newman/hello-world-report.xml'
+          """
+        }
+      }
+      post {
+        always {
+          junit 'target/newman/*.xml'
+        }
+      }
+    }
+/*    stage('Performance Test') {
+      steps {
+        container('jmeter') {
+          sh """
+            jmeter -n -t hello-world-test-plan.jmx \
+              -l hello-world-xml-report.jtl \
+              -Jjmeter.save.saveservice.output_format=xml \
+              -Jhost=${APP_URL} -Jport=${APP_PORT}
+          """
+        }
+      }
+      post {
+        always {
+          perfReport 'hello-world-xml-report.jtl'
+        }
+      } 
+    } */
+  }
+}
