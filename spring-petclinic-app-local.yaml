@@ -19,7 +19,7 @@ spec:
         - name: petclinic-rest
           image: ${REGISTRY_URL}/${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
           ports:
-            - containerPort: 8080
+            - containerPort: 9966
       imagePullSecrets:
         - name: harbor-credentials
 ---
@@ -36,8 +36,8 @@ spec:
     app: petclinic-rest
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 9966
+      targetPort: 9966
 #---
 #apiVersion: networking.k8s.io/v1beta1
 #kind: Ingress
