@@ -64,11 +64,10 @@ pipeline {
       steps {
         container('newman') {
           sh """
-            newman run hello-world.postman_collection.json \
-                  //--env-var 'host_url=${APP_URL}' --env-var 'port=${APP_PORT}' \
+            newman run petclinic.postman_collection.json \
                   --env-var 'baseUrl=${BASE_URL}' \
                   --reporters cli,junit \
-                  --reporter-junit-export 'target/newman/hello-world-report.xml'
+                  --reporter-junit-export 'target/newman/petclinic-report.xml'
           """
         }
       }
