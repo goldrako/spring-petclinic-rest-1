@@ -174,7 +174,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"response is ok\", () => { ",
-									"  pm.response.to.have.status(200) ",
+									"  pm.response.to.have.status(201) ",
 									"})"
 								],
 								"type": "text/javascript"
