@@ -6,7 +6,7 @@ pipeline {
         IMAGE_REPO = 'repo-spring-petclinic-rest'
         IMAGE_NAME = 'spring-petclinic-rest'
         IMAGE_TAG = '${GIT_COMMIT_SHORT}_${BUILD_NUMBER}'
-        REGISTRY_URL = 'http://3.37.98.34/:8000'
+        REGISTRY_URL = 'http://3.37.98.34:8000'
         REGISTRY_CREDENTIALS = 'harbor-docker-registry-admin'
     }
     stages {
